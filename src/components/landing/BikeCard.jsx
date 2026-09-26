@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { formatPrice } from '../../utils/formatConfiguration.js';
 import { getBikeOptions } from '../../config/bikes.js';
 import Icon from '../common/Icon.jsx';
+import { prefetchBikeAssets } from '../../utils/preloadAssets.js';
 
 function BikeCard({ bike, index, onQuickLook }) {
   return (
@@ -36,7 +37,13 @@ function BikeCard({ bike, index, onQuickLook }) {
             <span className="bike-card__price">{formatPrice(bike.basePrice)}</span>
             <span className="bike-card__opts">{getBikeOptions(bike).length} configurable options</span>
           </div>
-          <Link to={`/configurator/${bike.id}`} className="btn btn--primary" aria-label={`Configure the ${bike.name}`}>
+          <Link
+            to={`/configurator/${bike.id}`}
+            className="btn btn--primary"
+            aria-label={`Configure the ${bike.name}`}
+            onPointerEnter={() => prefetchBikeAssets(bike)}
+            onFocus={() => prefetchBikeAssets(bike)}
+          >
             Configure <Icon name="arrowRight" size={16} />
           </Link>
         </div>

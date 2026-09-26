@@ -10,7 +10,8 @@ npm run build && npm run preview
 
 | Script | Purpose |
 | --- | --- |
-| `npm run prepare-models` | `assets-src/*.glb` → web-ready `public/models/*.glb` (spec/gloss conversion, meshopt) |
+| `npm run prepare-models` | `assets-src/*.glb` → web-ready `public/models/*.glb` (spec/gloss conversion, weld + simplify, WebP textures, meshopt) |
+| `npm run prepare-hdr` | `assets-src/hdr/*.hdr` → 1K `public/hdr/*_1k.hdr` (lighting needs no more) |
 | `npm run inspect-models` | print the node → mesh → material tree of every model |
 | `npm run capture-renders` | re-export the landing-page renders from the real GLBs (needs `npm run dev` and local Chrome/Edge) |
 
@@ -70,6 +71,20 @@ __bike.describeParts();
 - Floating glass panel on desktop and a bottom sheet on mobile
 - Loading progress, WebGL-unavailable message, GLB error with retry, lighting fallback if the HDR fails, and missing parts hidden
 - Keyboard-accessible radio/tab/switch semantics, visible focus states and `prefers-reduced-motion` support
+
+## Performance
+
+Measure the **production build** (`npm run build && npm run preview`). The dev server serves
+unminified, unbundled modules, so Lighthouse on `npm run dev` scores it far lower than what ships.
+
+- **Models:** welded and simplified within a tight error bound, WebP textures, meshopt geometry. 19.4 MB → 9.3 MB for all three; the city bike went from 656k to 368k triangles.
+- **HDR:** downscaled 2K → 1K (6.3 MB → 1.6 MB) with no visible change to the lighting.
+- **Geometry decoding** runs in Web Workers (`src/three/loaders.js`).
+- **Shaders** compile with `compileAsync`; the bike appears once they are ready.
+- **Early download:** configurator deep links preload the model and HDR at boot, and landing-page "Configure" buttons prefetch on hover (`src/utils/preloadAssets.js`).
+- **Canvas mount:** the WebGL canvas mounts after the UI's first paint, and entrance animations never start from `opacity: 0`.
+- **Fonts** are self-hosted with `@fontsource-variable`, so there are no render-blocking third-party requests.
+- **Rendering** is on demand, and three.js is loaded only on 3D routes.
 
 ## Known notes
 

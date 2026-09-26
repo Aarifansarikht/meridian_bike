@@ -192,6 +192,15 @@
     transform: translateY(22px);
   }
 }
+/* Large headings are LCP candidates: animate movement only, never opacity, so they count as painted at once. */
+.hero__title.reveal {
+  animation-name: rise-move;
+}
+@keyframes rise-move {
+  from {
+    transform: translateY(22px);
+  }
+}
 @keyframes hero-bike {
   from {
     opacity: 0;

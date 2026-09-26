@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { BIKES, BIKE_LIST, getBikeOptions } from '../../config/bikes.js';
 import { formatPrice } from '../../utils/formatConfiguration.js';
 import Icon from '../common/Icon.jsx';
+import { prefetchBikeAssets } from '../../utils/preloadAssets.js';
 
 const hero = BIKES.corsa;
 const optionCount = BIKE_LIST.reduce((n, b) => n + getBikeOptions(b).length, 0);
@@ -21,7 +22,12 @@ export default function Hero() {
           and share the exact build in one tap.
         </p>
         <div className="hero__ctas reveal">
-          <Link to={`/configurator/${hero.id}`} className="btn btn--primary btn--lg">
+          <Link
+            to={`/configurator/${hero.id}`}
+            className="btn btn--primary btn--lg"
+            onPointerEnter={() => prefetchBikeAssets(hero)}
+            onFocus={() => prefetchBikeAssets(hero)}
+          >
             Configure your bike <Icon name="arrowRight" size={18} />
           </Link>
           <a href="#models" className="btn btn--ghost btn--lg">

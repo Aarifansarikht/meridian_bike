@@ -131,6 +131,7 @@ uniform vec4 rcSatLum[RC_COUNT];  // s0, s1, l0, l1
 uniform vec4 rcTarget[RC_COUNT];  // linear rgb, active
 uniform float rcRefLum[RC_COUNT];
 uniform float rcDetail[RC_COUNT];
+uniform float rcMaskAdd[RC_COUNT]; // 1 = channel is painted like the primary (e.g. "clean" graphics)
 
 vec3 rcRgbToHsl(vec3 c) {
   float mx = max(c.r, max(c.g, c.b));
@@ -207,7 +208,10 @@ float rcW[RC_COUNT];
   diffuseColor.rgb = diffuse * rcOut;
 }
 #ifdef RC_MASK
-surfMask = rcW[RC_MASK]; // patterns only cover the paint region (decals stay crisp)
+// Patterns cover the paint region plus any channel currently painted like it; decals stay crisp.
+surfMask = rcW[RC_MASK];
+for (int i = 0; i < RC_COUNT; i++) surfMask += rcW[i] * rcMaskAdd[i];
+surfMask = clamp(surfMask, 0.0, 1.0);
 #endif
 #endif
 #ifdef PAT
@@ -261,7 +265,7 @@ if (patParams.x > 0.5 && patBump > 0.0) {
  */
 export function installSurfaceShader(material, { channels = null, pattern = false, maskChannel = null } = {}) {
   const recolor = Boolean(material.map && channels?.length);
-  if (!recolor && !pattern) return { channels: null, setChannel() {}, setPattern() {} };
+  if (!recolor && !pattern) return { channels: null, setChannel() {}, setChannelMasked() {}, setPattern() {} };
 
   const uniforms = {};
   let info = null;
@@ -278,6 +282,7 @@ export function installSurfaceShader(material, { channels = null, pattern = fals
       rcTarget: { value: new Array(channels.length * 4).fill(0) },
       rcRefLum: { value: channels.map(([id]) => info[id].refLum) },
       rcDetail: { value: channels.map(([, def]) => def.detail ?? DEFAULT_DETAIL) },
+      rcMaskAdd: { value: new Array(channels.length).fill(0) },
     });
     if (maskChannel && info[maskChannel] && channels.length > 1) maskIndex = info[maskChannel].index;
   }
@@ -328,6 +333,11 @@ export function installSurfaceShader(material, { channels = null, pattern = fals
       } else {
         v[o + 3] = 0;
       }
+    },
+    /** Marks a channel as painted like the pattern mask channel, so surface textures cover it too. */
+    setChannelMasked(id, masked) {
+      const c = info?.[id];
+      if (c) uniforms.rcMaskAdd.value[c.index] = masked ? 1 : 0;
     },
     /** Activates a TEXTURES preset (or clears it with null / 'factory'). */
     setPattern(key) {

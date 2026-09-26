@@ -18,8 +18,8 @@
   --shadow-lg: 0 30px 80px -30px rgba(0, 0, 0, 0.75);
   --radius: 14px;
   --radius-sm: 8px;
-  --font-display: 'Archivo', 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Archivo Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-strong);
   color-scheme: dark;

@@ -7,13 +7,11 @@
   overflow: hidden;
   background:
     radial-gradient(ellipse 60% 55% at 40% 46%, var(--stage-1) 0%, var(--stage-2) 58%, var(--bg) 100%);
-  animation: cfg-in 0.8s var(--ease);
 }
-@keyframes cfg-in {
-  from {
-    opacity: 0;
-  }
-}
+/*
+ * Entrance animations below move but never fade from opacity 0: until the browser produces its
+ * first frames (busy while the 3D scene initialises) an opacity-0 start would keep the UI invisible.
+ */
 .configurator::after {
   /* horizon line under the bike */
   content: '';
@@ -104,7 +102,7 @@
   gap: 8px;
   max-width: 420px;
   pointer-events: none;
-  animation: rise 0.9s var(--ease) both 0.2s;
+  animation: rise-move 0.9s var(--ease) both 0.2s; /* no opacity: this heading is the LCP element */
 }
 .stage-title__name {
   font-size: clamp(1.7rem, 2.8vw, 2.7rem);
@@ -173,11 +171,12 @@
   flex-direction: column;
   border-radius: var(--radius);
   overflow: hidden;
+  /* clip (not hidden): the panel frame must never be scrolled by focus — only its body scrolls */
+  overflow: clip;
   animation: panel-in 0.8s var(--ease) both 0.1s;
 }
 @keyframes panel-in {
   from {
-    opacity: 0;
     transform: translateX(24px);
   }
 }
@@ -232,7 +231,9 @@
   transform: scaleX(1);
 }
 .config-panel__body {
+  position: relative;
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 8px 20px 20px;
   display: grid;
@@ -244,7 +245,6 @@
 }
 @keyframes body-in {
   from {
-    opacity: 0;
     transform: translateY(8px);
   }
 }
@@ -400,6 +400,7 @@
   gap: 8px;
 }
 .segmented__item {
+  position: relative; /* anchors the visually-hidden radio inside the tile */
   display: grid;
   justify-items: center;
   gap: 6px;
@@ -460,6 +461,7 @@
   gap: 8px;
 }
 .texture-tile {
+  position: relative;
   display: grid;
   gap: 6px;
   padding: 6px 6px 8px;
@@ -505,6 +507,7 @@
   gap: 8px;
 }
 .choice {
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -838,7 +841,6 @@
 @keyframes sheet-in {
   from {
     transform: translateY(40%);
-    opacity: 0;
   }
 }
 .sheet-handle {

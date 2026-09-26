@@ -68,6 +68,7 @@ export function applyColor(material, colors = {}, links = {}) {
   if (recolor) {
     for (const id of Object.keys(recolor.channels)) {
       const linkedTo = links[id];
+      recolor.setChannelMasked(id, Boolean(linkedTo) && linkedTo === primaryChannel);
       if (linkedTo) {
         const hex = colors[linkedTo];
         recolor.setChannel(id, hex ? hexToLinear(hex) : recolor.channels[linkedTo]?.factory ?? null);

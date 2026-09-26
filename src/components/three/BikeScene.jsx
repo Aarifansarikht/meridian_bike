@@ -44,7 +44,7 @@ export default function BikeScene({ bike, partStates, cameraRequest, onReady, re
 
       {showFloor && <StageFloor />}
       <Suspense fallback={null}>
-        <BikeModel key={bike.id} bike={bike} partStates={partStates} onReady={handleReady} />
+        <BikeModel key={bike.id} bike={bike} partStates={partStates} onReady={handleReady} environmentFailed={hdrFailed} />
         {runtime && (
           <ContactShadows
             key={`${bike.id}:${shadowKey}`}

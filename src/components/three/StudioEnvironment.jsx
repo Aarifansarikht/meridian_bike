@@ -1,6 +1,6 @@
 import { Environment } from '@react-three/drei';
 
-export const HDR_URL = '/hdr/monochrome_studio_03_2k.hdr';
+import { HDR_URL } from '../../config/scene.js';
 
 /** Image-based lighting from the supplied studio HDR (lighting only — not shown as background). */
 export default function StudioEnvironment({ intensity = 0.85 }) {

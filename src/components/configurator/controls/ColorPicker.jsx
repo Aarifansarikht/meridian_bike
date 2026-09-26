@@ -42,6 +42,7 @@ function ColorPicker({ label, value, onChange, swatches, factoryLabel, match, ma
         <label className={`swatch swatch--custom ${isCustom ? 'is-checked' : ''}`} title="Custom colour">
           <input
             type="color"
+            name={`${name}-custom`}
             value={isCustom ? value : '#888888'}
             onChange={(e) => onChange(e.target.value)}
             className="swatch__native"
