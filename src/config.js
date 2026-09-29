@@ -48,7 +48,7 @@ export const COLORS = [
 export const DEFAULT_COLORS = { frame: '#b3261e', rims: '#1c1c1e' };
 
 /**
- * Environments.
+ * Environments..
  *   file        small HDR (1K) — provides the lighting and reflections on the product
  *   background  optional high-resolution photo of the same place, projected onto a ground
  *               so the product stands IN the scene instead of floating in front of it
