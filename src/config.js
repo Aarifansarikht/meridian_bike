@@ -48,23 +48,26 @@ export const COLORS = [
 export const DEFAULT_COLORS = { frame: '#b3261e', rims: '#1c1c1e' };
 
 /**
- * Environments. Each one is an HDR image that lights the product (and reflects in it).
- * `showBackground: true` also displays the HDR photo behind the product.
+ * Environments.
+ *   file        small HDR (1K) — provides the lighting and reflections on the product
+ *   background  optional high-resolution photo of the same place, projected onto a ground
+ *               so the product stands IN the scene instead of floating in front of it
+ *   ground      height = camera height of the photo (m), radius = size of the projected world (m)
  */
 export const ENVIRONMENTS = [
   {
     id: 'studio',
     name: 'Studio',
     file: '/hdr/monochrome_studio_03_1k.hdr',
-    showBackground: false,
     backgroundColor: '#e7e7ea',
     intensity: 1,
   },
   {
     id: 'outdoor',
     name: 'Outdoor',
-    file: '/hdr/meadow_2_1k.hdr',
-    showBackground: true,
+    file: '/hdr/palermo_park_1k.hdr',
+    background: '/hdr/palermo_park_bg.jpg',
+    ground: { height: 1.7, radius: 60 },
     intensity: 1.1,
   },
 ];

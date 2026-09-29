@@ -1,15 +1,18 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, useGLTF, useEnvironment } from '@react-three/drei';
+import { OrbitControls, ContactShadows, useGLTF, useEnvironment, useTexture } from '@react-three/drei';
 import ProductModel from './ProductModel.jsx';
 import SceneEnvironment from './SceneEnvironment.jsx';
 import Loader from './Loader.jsx';
 import { PRODUCTS, ENVIRONMENTS } from '../config.js';
 
-// Start downloading the first model and all HDRs straight away,
+// Start downloading the first model and all environment files straight away,
 // so switching environment later is instant.
 useGLTF.preload(PRODUCTS[0].model);
-ENVIRONMENTS.forEach((env) => useEnvironment.preload({ files: env.file }));
+ENVIRONMENTS.forEach((env) => {
+  useEnvironment.preload({ files: env.file });
+  if (env.background) useTexture.preload(env.background);
+});
 
 /**
  * The 3D viewport: canvas, camera, controls, lighting, shadow and the product.
@@ -30,7 +33,8 @@ export default function Viewer({ product, colors, environment }) {
 
         <Suspense fallback={null}>
           <ProductModel product={product} colors={colors} />
-          <ContactShadows position={[0, 0, 0]} scale={5} blur={2.4} far={1.5} opacity={0.55} />
+          {/* Soft shadow under the bike — this is what makes it look grounded. */}
+          <ContactShadows position={[0, 0, 0]} scale={5} blur={1.8} far={1.5} opacity={0.85} />
         </Suspense>
 
         <OrbitControls

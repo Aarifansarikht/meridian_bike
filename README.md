@@ -44,13 +44,13 @@ src/
 
 **2. Colour configuration.** `config.js` lists which **material names** in each GLB belong to each part (frame, rims). The names were found by inspecting the files with `npm run inspect-models`. When a colour is picked, a `useEffect` sets `material.color` on those materials only. The model is **not reloaded**: `useGLTF` caches it, and only the colour property changes. Six colours are offered for each part.
 
-**3. Environment.** Each environment is an HDR image passed to drei's `<Environment>`. It lights the product and appears in its reflections. **Studio** is a neutral grey studio light on a plain background; **Outdoor** is a meadow, also shown as the background. Switching visibly changes the lighting, reflections and backdrop.
+**3. Environment.** Each environment is an HDR image passed to drei's `<Environment>`. It lights the product and appears in its reflections. **Studio** is a neutral grey studio light on a plain background. **Outdoor** is a park: a small 1K HDR does the lighting, and a sharp 4K photo of the same place is projected onto a ground dome (three.js `GroundedSkybox`), so the bike stands on the path with a contact shadow instead of floating. Switching visibly changes the lighting, reflections and backdrop.
 
 **4. UI.** A single panel with the model, two colour rows and environment buttons. All state lives in `App.jsx` and is passed down as props.
 
 **5. Performance.**
 - **Models optimised offline** (`npm run prepare-models`): simplified geometry, WebP textures and meshopt compression. The city bike went from 40 MB to 6.3 MB, and the BMX from 3.8 MB to 0.8 MB.
-- **HDRs downscaled to 1K** (`npm run prepare-hdr`): 6.3 MB → 1.6 MB each, with the same lighting.
+- **HDRs downscaled to 1K** (`npm run prepare-hdr`): 6.3 MB → 1.6 MB each, with the same lighting. Only the visible background uses a 4K JPEG (1.6 MB).
 - **On-demand rendering** (`frameloop="demand"`): a frame is drawn only when something changes.
 - **Preloading:** the first model and both HDRs are preloaded, so switching environment is instant.
 - **Separate `Suspense` boundaries** keep the product visible while an environment loads.
@@ -58,4 +58,5 @@ src/
 ## Assets
 
 - "BMX" by stealth86, and "Bicycle m." by Milionna, both on Sketchfab, licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- "Palermo Park" HDRI by Andreas Mischok, [Poly Haven](https://polyhaven.com/a/palermo_park), CC0
 - The original, unoptimised files are in `assets-src/`; the web versions are in `public/`

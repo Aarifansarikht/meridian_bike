@@ -5,9 +5,13 @@
  * largest face is 256 px, so a 2K (2048×1024) source costs 4× the download and parse time for
  * no visible difference. A 2×2 box filter in linear float space keeps total energy intact.
  *
+ * Background photos (*.jpg, e.g. Poly Haven "tonemapped JPG") are resized to 4K. They are shown
+ * behind the product, where resolution matters, while the small HDR only provides the lighting.
+ *
  *   npm run prepare-hdr
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync } from 'node:fs';
+import sharp from 'sharp';
 
 const SRC = 'assets-src/hdr';
 const OUT = 'public/hdr';
@@ -129,4 +133,13 @@ for (const file of readdirSync(SRC).filter((f) => f.endsWith('.hdr'))) {
   writeFileSync(`${OUT}/${name}`, writeRGBE(img));
   const mb = (p) => (statSync(p).size / 1e6).toFixed(2) + ' MB';
   console.log(`${SRC}/${file} (${mb(`${SRC}/${file}`)}) -> ${OUT}/${name} (${img.width}×${img.height}, ${mb(`${OUT}/${name}`)})`);
+}
+
+// Background photos: 4096×2048 JPEG is sharp on screen and ~1–2 MB.
+for (const file of readdirSync(SRC).filter((f) => f.endsWith('.jpg'))) {
+  const src = `${SRC}/${file}`;
+  const out = `${OUT}/${file}`;
+  await sharp(src).resize(4096, 2048).jpeg({ quality: 82, mozjpeg: true }).toFile(out);
+  const mb = (p) => (statSync(p).size / 1e6).toFixed(2) + ' MB';
+  console.log(`${src} (${mb(src)}) -> ${out} (4096×2048, ${mb(out)})`);
 }
